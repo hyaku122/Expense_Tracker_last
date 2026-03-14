@@ -429,6 +429,10 @@ select {
   align-items: center;
 }
 
+.entry-row-meta {
+  flex-wrap: wrap;
+}
+
 .entry-row-top {
   margin-bottom: 8px;
 }
@@ -540,6 +544,22 @@ select {
   justify-content: center;
   min-width: 68px;
   white-space: nowrap;
+}
+
+.entry-money-pill {
+  gap: 6px;
+  color: var(--text);
+}
+
+.entry-meta-label {
+  color: var(--muted);
+}
+
+.entry-meta-value {
+  color: #111111;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .entry-row.rating-three {
