@@ -426,6 +426,15 @@ select {
   margin-bottom: 8px;
 }
 
+.entry-top-actions {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-left: auto;
+}
+
 .entry-item-line {
   display: flex;
   align-items: flex-start;
@@ -448,6 +457,9 @@ select {
   flex: 1;
   min-width: 0;
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .entry-item {
@@ -467,9 +479,32 @@ select {
 }
 
 .entry-note-popover {
+  margin-top: 8px;
   padding: 10px 12px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.8);
+}
+
+.entry-detail-block + .entry-detail-block {
+  margin-top: 8px;
+}
+
+.entry-detail-label,
+.entry-detail-value {
+  margin: 0;
+}
+
+.entry-detail-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.entry-detail-value {
+  margin-top: 3px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--text);
 }
 
 .note-icon-button {
@@ -492,6 +527,12 @@ select {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.entry-rating-pill {
+  justify-content: center;
+  min-width: 68px;
+  white-space: nowrap;
 }
 
 .entry-row.rating-three {

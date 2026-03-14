@@ -456,28 +456,32 @@
     const storeLabel = entry.store || "店名未入力";
     const itemLabel = (entry.item || "").trim();
     const extraParts = [];
-    const noteButton = entry.notes
-      ? '<button class="note-icon-button" type="button" data-action="toggle-note" data-entry-id="' + escapeHtml(entry.id) + '" aria-label="Notes">' + NOTE_ICON + "</button>"
-      : "";
-    const noteBody = entry.notes && runtime.openNoteEntryId === entry.id
-      ? '<div class="entry-note-popover">' + escapeHtml(entry.notes) + "</div>"
+    const detailBlocks = [];
+    const hasHiddenDetails = Boolean(itemLabel || entry.notes);
+    const noteButton = hasHiddenDetails
+      ? '<button class="note-icon-button" type="button" data-action="toggle-note" data-entry-id="' + escapeHtml(entry.id) + '" aria-label="ItemとNotesを表示">' + NOTE_ICON + "</button>"
       : "";
     const ratingClass = entry.rating === "⭐⭐⭐" ? " rating-three" : (entry.rating === "⭐⭐" ? " rating-two" : "");
-    const itemLine = itemLabel || noteButton
-      ? '<div class="entry-item-line' + (itemLabel ? "" : " note-only") + '">' +
-        (itemLabel ? '<p class="entry-item">' + escapeHtml(itemLabel) + "</p>" : "") +
-        noteButton +
-        "</div>"
-      : "";
 
     if (entry.goodValuePoint) {
       extraParts.push('<p class="entry-good-point">good value point: ' + escapeHtml(entry.goodValuePoint) + "</p>");
     }
 
+    if (itemLabel) {
+      detailBlocks.push('<div class="entry-detail-block"><p class="entry-detail-label">Item</p><p class="entry-detail-value">' + escapeHtml(itemLabel) + "</p></div>");
+    }
+
+    if (entry.notes) {
+      detailBlocks.push('<div class="entry-detail-block"><p class="entry-detail-label">Notes</p><p class="entry-detail-value">' + escapeHtml(entry.notes) + "</p></div>");
+    }
+
+    const noteBody = hasHiddenDetails && runtime.openNoteEntryId === entry.id
+      ? '<div class="entry-note-popover">' + detailBlocks.join("") + "</div>"
+      : "";
+
     return (
       '<article class="entry-row' + ratingClass + '" data-action="edit-entry" data-entry-id="' + escapeHtml(entry.id) + '" role="button" tabindex="0">' +
-      '<div class="entry-row-top"><span class="entry-date">' + escapeHtml(formatDateLabel(entry.date, entry.year, entry.month)) + '</span><span class="entry-store">' + escapeHtml(storeLabel) + '</span><span class="meta-pill">' + escapeHtml(entry.rating || "未評価") + "</span></div>" +
-      itemLine +
+      '<div class="entry-row-top"><span class="entry-date">' + escapeHtml(formatDateLabel(entry.date, entry.year, entry.month)) + '</span><span class="entry-store">' + escapeHtml(storeLabel) + '</span><span class="entry-top-actions">' + noteButton + '<span class="meta-pill entry-rating-pill">' + escapeHtml(entry.rating || "未評価") + "</span></span></div>" +
       '<div class="entry-row-meta"><span class="meta-pill">Amount ' + escapeHtml(formatCurrency(amount)) + '</span><span class="meta-pill">Pt ' + escapeHtml(formatCurrency(pointAmount)) + '</span><span class="meta-pill">合計 ' + escapeHtml(formatCurrency(total)) + "</span></div>" +
       extraParts.join("") +
       noteBody +
