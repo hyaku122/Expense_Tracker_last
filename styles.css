@@ -307,7 +307,7 @@ select {
 
 .category-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 52px auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -360,6 +360,13 @@ select {
 .category-total strong {
   display: block;
   font-size: 1.15rem;
+}
+
+.category-header-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
 .category-header .meta-pill {

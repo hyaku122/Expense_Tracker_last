@@ -432,8 +432,10 @@
         '<span class="category-submeta"><span class="meta-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + '</span><span class="meta-pill">Pt ' + escapeHtml(formatCurrency(totals.point)) + "</span></span>" +
         "</span>" +
         "</button>" +
+        '<div class="category-header-actions">' +
         '<button class="category-quick-add" type="button" data-action="add-entry" data-category-id="' + escapeHtml(category.id) + '" aria-label="明細を追加">' + PENCIL_ICON + "</button>" +
         '<button class="category-toggle category-total" type="button" data-action="toggle-category" data-category-id="' + escapeHtml(category.id) + '"><strong>' + escapeHtml(formatCurrency(totals.total)) + '</strong><span class="meta-pill">' + (isCollapsed ? "開く" : "閉じる") + "</span></button>" +
+        "</div>" +
         "</div>" +
         (isCollapsed ? "" : renderCategoryBody(category, entries)) +
         "</section>"
