@@ -8,6 +8,7 @@
   const CACHE_PREFIX = "expense-tracker-static-";
   const UPDATE_CONFIRM_MESSAGE = "キャッシュを削除して最新版を読み込みます。入力データは消えません。実行しますか？";
   const MONTH_LABELS = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+  const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
   const PENCIL_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.8V20h3.2l9.44-9.44-3.2-3.2L4 16.8Zm14.76-8.92c.32-.32.32-.84 0-1.16l-1.48-1.48a.82.82 0 0 0-1.16 0l-1.16 1.16 3.2 3.2 1.16-1.16Z"></path></svg>';
   const NOTE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm8 1.5V9h4.5"></path><path d="M8 12h8M8 15h8M8 18h5"></path></svg>';
 
@@ -424,7 +425,7 @@
       }));
       const totals = calculateTotals(entries);
       const isCollapsed = Boolean(category.collapsed);
-      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.62);
+      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.74);
 
       return (
         '<section class="category-card" style="' + styleValue + '">' +
@@ -857,6 +858,13 @@
 
     dom.sheetOverlay.classList.remove("hidden");
     dom.entrySheet.classList.remove("hidden");
+    dom.entrySheet.scrollTop = 0;
+    window.requestAnimationFrame(function () {
+      dom.entrySheet.scrollTop = 0;
+      if (typeof dom.entrySheet.scrollTo === "function") {
+        dom.entrySheet.scrollTo(0, 0);
+      }
+    });
   }
 
   function closeEntrySheet() {
@@ -877,20 +885,7 @@
   }
 
   function renderNotesSuggestions(currentText) {
-    const suggestions = state.noteHistory.filter(function (note) {
-      return note && note !== currentText;
-    }).slice(0, 8);
-
-    dom.notesSuggestionList.innerHTML = suggestions.map(function (note) {
-      return '<button class="action-chip" type="button" data-note-suggestion="' + escapeHtml(note) + '">' + escapeHtml(note) + "</button>";
-    }).join("");
-
-    Array.prototype.forEach.call(dom.notesSuggestionList.querySelectorAll("[data-note-suggestion]"), function (button) {
-      button.addEventListener("click", function () {
-        dom.entryNotes.value = button.dataset.noteSuggestion || "";
-        renderNotesSuggestions(dom.entryNotes.value);
-      });
-    });
+    dom.notesSuggestionList.innerHTML = "";
   }
 
   function toggleEntryPointAmountState() {
@@ -950,7 +945,6 @@
     }
 
     ensureStoreOption(categoryId, entry.store);
-    rememberNote(entry.notes);
 
     state.ui.selectedYear = entry.year;
     state.ui.selectedMonth = entry.month;
@@ -1214,7 +1208,7 @@
   }
 
   function saveState() {
-    state.noteHistory = uniqueStrings(state.noteHistory).slice(0, 24);
+    state.noteHistory = [];
     state.lastSavedAt = new Date().toISOString();
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
@@ -1296,7 +1290,7 @@
       entries: entries,
       recurringTemplates: templates,
       storeOptions: storeOptions,
-      noteHistory: uniqueStrings(Array.isArray(raw.noteHistory) ? raw.noteHistory : []),
+      noteHistory: [],
       ui: {
         selectedYear: selectedYear,
         selectedMonth: selectedMonth,
@@ -1608,7 +1602,23 @@
       return year + "/" + month;
     }
 
-    return Number(parts[1]) + "/" + Number(parts[2]);
+    const parsedYear = Number(parts[0]);
+    const parsedMonth = Number(parts[1]);
+    const parsedDay = Number(parts[2]);
+    const parsedDate = new Date(parsedYear, parsedMonth - 1, parsedDay);
+
+    if (
+      !Number.isFinite(parsedYear) ||
+      !Number.isFinite(parsedMonth) ||
+      !Number.isFinite(parsedDay) ||
+      parsedDate.getFullYear() !== parsedYear ||
+      parsedDate.getMonth() !== parsedMonth - 1 ||
+      parsedDate.getDate() !== parsedDay
+    ) {
+      return year + "/" + month;
+    }
+
+    return parsedMonth + "/" + parsedDay + "(" + WEEKDAY_LABELS[parsedDate.getDay()] + ")";
   }
 
   function buildDateString(year, month, day) {
