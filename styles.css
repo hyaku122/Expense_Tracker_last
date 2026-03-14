@@ -314,7 +314,7 @@ select {
   width: 100%;
   padding: 16px 16px 14px;
   background:
-    linear-gradient(135deg, var(--category-soft-strong), rgba(255, 255, 255, 0.7));
+    linear-gradient(135deg, var(--category-soft-strong), rgba(255, 255, 255, 0.5));
 }
 
 .category-toggle {
@@ -431,6 +431,10 @@ select {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+}
+
+.entry-item-line.note-only {
+  justify-content: flex-end;
 }
 
 .entry-date {

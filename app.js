@@ -424,7 +424,7 @@
       }));
       const totals = calculateTotals(entries);
       const isCollapsed = Boolean(category.collapsed);
-      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.42);
+      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.62);
 
       return (
         '<section class="category-card" style="' + styleValue + '">' +
@@ -457,7 +457,7 @@
     const pointAmount = entry.pointEnabled ? parseMoney(entry.pointAmount) : 0;
     const total = amount + pointAmount;
     const storeLabel = entry.store || "店名未入力";
-    const itemLabel = entry.item || "項目未入力";
+    const itemLabel = (entry.item || "").trim();
     const extraParts = [];
     const noteButton = entry.notes
       ? '<button class="note-icon-button" type="button" data-action="toggle-note" data-entry-id="' + escapeHtml(entry.id) + '" aria-label="Notes">' + NOTE_ICON + "</button>"
@@ -466,6 +466,12 @@
       ? '<div class="entry-note-popover">' + escapeHtml(entry.notes) + "</div>"
       : "";
     const ratingClass = entry.rating === "⭐⭐⭐" ? " rating-three" : (entry.rating === "⭐⭐" ? " rating-two" : "");
+    const itemLine = itemLabel || noteButton
+      ? '<div class="entry-item-line' + (itemLabel ? "" : " note-only") + '">' +
+        (itemLabel ? '<p class="entry-item">' + escapeHtml(itemLabel) + "</p>" : "") +
+        noteButton +
+        "</div>"
+      : "";
 
     if (entry.goodValuePoint) {
       extraParts.push('<p class="entry-good-point">good value point: ' + escapeHtml(entry.goodValuePoint) + "</p>");
@@ -474,7 +480,7 @@
     return (
       '<article class="entry-row' + ratingClass + '" data-action="edit-entry" data-entry-id="' + escapeHtml(entry.id) + '" role="button" tabindex="0">' +
       '<div class="entry-row-top"><span class="entry-date">' + escapeHtml(formatDateLabel(entry.date, entry.year, entry.month)) + '</span><span class="entry-store">' + escapeHtml(storeLabel) + '</span><span class="meta-pill">' + escapeHtml(entry.rating || "未評価") + "</span></div>" +
-      '<div class="entry-item-line"><p class="entry-item">' + escapeHtml(itemLabel) + "</p>" + noteButton + "</div>" +
+      itemLine +
       '<div class="entry-row-meta"><span class="meta-pill">Amount ' + escapeHtml(formatCurrency(amount)) + '</span><span class="meta-pill">Pt ' + escapeHtml(formatCurrency(pointAmount)) + '</span><span class="meta-pill">合計 ' + escapeHtml(formatCurrency(total)) + "</span></div>" +
       extraParts.join("") +
       noteBody +
