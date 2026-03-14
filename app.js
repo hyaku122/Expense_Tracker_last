@@ -487,7 +487,7 @@
     }
 
     if (pointAmount !== 0) {
-      metaParts.push('<span class="meta-pill entry-money-pill"><span class="entry-meta-label">Pt</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(pointAmount)) + "</strong></span>");
+      metaParts.push('<span class="meta-pill entry-money-pill entry-point-pill"><span class="entry-meta-label">Pt</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(pointAmount)) + "</strong></span>");
     }
 
     metaParts.push('<span class="meta-pill entry-money-pill"><span class="entry-meta-label">合計</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(total)) + "</strong></span>");

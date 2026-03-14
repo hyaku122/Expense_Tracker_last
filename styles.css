@@ -562,6 +562,11 @@ select {
   line-height: 1;
 }
 
+.entry-point-pill .entry-meta-label,
+.entry-point-pill .entry-meta-value {
+  color: #1f78d8;
+}
+
 .entry-row.rating-three {
   border: 3px solid #db688a;
 }
