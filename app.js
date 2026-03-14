@@ -8,6 +8,8 @@
   const CACHE_PREFIX = "expense-tracker-static-";
   const UPDATE_CONFIRM_MESSAGE = "キャッシュを削除して最新版を読み込みます。入力データは消えません。実行しますか？";
   const MONTH_LABELS = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+  const PENCIL_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.8V20h3.2l9.44-9.44-3.2-3.2L4 16.8Zm14.76-8.92c.32-.32.32-.84 0-1.16l-1.48-1.48a.82.82 0 0 0-1.16 0l-1.16 1.16 3.2 3.2 1.16-1.16Z"></path></svg>';
+  const NOTE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm8 1.5V9h4.5"></path><path d="M8 12h8M8 15h8M8 18h5"></path></svg>';
 
   const CATEGORY_SEEDS = [
     { id: "investment", name: "投資", color: "#a9d6ff", stores: ["NISA積立", "iDeCo"] },
@@ -27,7 +29,8 @@
     view: "main",
     toastTimer: null,
     serviceWorkerRegistration: null,
-    reloadOnControllerChange: false
+    reloadOnControllerChange: false,
+    openNoteEntryId: ""
   };
 
   let state = loadState();
@@ -161,6 +164,10 @@
 
       if (action === "add-entry" && categoryId) {
         openEntrySheet(null, categoryId);
+      }
+
+      if (action === "toggle-note" && entryId) {
+        toggleNote(entryId);
       }
 
       if (action === "edit-entry" && entryId) {
@@ -398,8 +405,8 @@
     const totals = calculateTotals(entries);
 
     dom.monthSummary.innerHTML = [
-      renderSummaryCard("総支払額", totals.total),
-      renderSummaryCard("ポイントを引いた支払額", totals.actual),
+      renderSummaryCard("総利用額", totals.total),
+      renderSummaryCard("実質支払額", totals.actual),
       renderSummaryCard("ポイント利用額", totals.point)
     ].join("");
   }
@@ -417,17 +424,20 @@
       }));
       const totals = calculateTotals(entries);
       const isCollapsed = Boolean(category.collapsed);
-      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.28);
+      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.42);
 
       return (
         '<section class="category-card" style="' + styleValue + '">' +
-        '<button class="category-header" type="button" data-action="toggle-category" data-category-id="' + escapeHtml(category.id) + '">' +
+        '<div class="category-header">' +
+        '<button class="category-toggle category-main-toggle" type="button" data-action="toggle-category" data-category-id="' + escapeHtml(category.id) + '">' +
         '<span class="category-title">' +
         '<span class="category-name">' + escapeHtml(category.name) + "</span>" +
         '<span class="category-submeta"><span class="meta-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + '</span><span class="meta-pill">Pt ' + escapeHtml(formatCurrency(totals.point)) + "</span></span>" +
         "</span>" +
-        '<span class="category-total"><strong>' + escapeHtml(formatCurrency(totals.total)) + '</strong><span class="meta-pill">' + (isCollapsed ? "開く" : "閉じる") + "</span></span>" +
         "</button>" +
+        '<button class="category-quick-add" type="button" data-action="add-entry" data-category-id="' + escapeHtml(category.id) + '" aria-label="明細を追加">' + PENCIL_ICON + "</button>" +
+        '<button class="category-toggle category-total" type="button" data-action="toggle-category" data-category-id="' + escapeHtml(category.id) + '"><strong>' + escapeHtml(formatCurrency(totals.total)) + '</strong><span class="meta-pill">' + (isCollapsed ? "開く" : "閉じる") + "</span></button>" +
+        "</div>" +
         (isCollapsed ? "" : renderCategoryBody(category, entries)) +
         "</section>"
       );
@@ -436,7 +446,7 @@
 
   function renderCategoryBody(category, entries) {
     return (
-      '<div class="category-body"><div class="category-actions"><button class="section-add" type="button" data-action="add-entry" data-category-id="' + escapeHtml(category.id) + '">このカテゴリに追加</button></div>' +
+      '<div class="category-body">' +
       (entries.length ? '<div class="entry-list">' + entries.map(renderEntryRow).join("") + "</div>" : '<div class="empty-state">まだ明細がありません</div>') +
       "</div>"
     );
@@ -449,26 +459,26 @@
     const storeLabel = entry.store || "店名未入力";
     const itemLabel = entry.item || "項目未入力";
     const extraParts = [];
+    const noteButton = entry.notes
+      ? '<button class="note-icon-button" type="button" data-action="toggle-note" data-entry-id="' + escapeHtml(entry.id) + '" aria-label="Notes">' + NOTE_ICON + "</button>"
+      : "";
+    const noteBody = entry.notes && runtime.openNoteEntryId === entry.id
+      ? '<div class="entry-note-popover">' + escapeHtml(entry.notes) + "</div>"
+      : "";
+    const ratingClass = entry.rating === "⭐⭐⭐" ? " rating-three" : (entry.rating === "⭐⭐" ? " rating-two" : "");
 
     if (entry.goodValuePoint) {
       extraParts.push('<p class="entry-good-point">good value point: ' + escapeHtml(entry.goodValuePoint) + "</p>");
     }
 
-    if (entry.notes) {
-      extraParts.push('<p class="entry-notes">Notes: ' + escapeHtml(entry.notes) + "</p>");
-    }
-
-    if (entry.templateId) {
-      extraParts.push('<p class="entry-notes">定期入力から作成</p>');
-    }
-
     return (
-      '<button class="entry-row" type="button" data-action="edit-entry" data-entry-id="' + escapeHtml(entry.id) + '">' +
+      '<article class="entry-row' + ratingClass + '" data-action="edit-entry" data-entry-id="' + escapeHtml(entry.id) + '" role="button" tabindex="0">' +
       '<div class="entry-row-top"><span class="entry-date">' + escapeHtml(formatDateLabel(entry.date, entry.year, entry.month)) + '</span><span class="entry-store">' + escapeHtml(storeLabel) + '</span><span class="meta-pill">' + escapeHtml(entry.rating || "未評価") + "</span></div>" +
-      '<p class="entry-item">' + escapeHtml(itemLabel) + "</p>" +
+      '<div class="entry-item-line"><p class="entry-item">' + escapeHtml(itemLabel) + "</p>" + noteButton + "</div>" +
       '<div class="entry-row-meta"><span class="meta-pill">Amount ' + escapeHtml(formatCurrency(amount)) + '</span><span class="meta-pill">Pt ' + escapeHtml(formatCurrency(pointAmount)) + '</span><span class="meta-pill">合計 ' + escapeHtml(formatCurrency(total)) + "</span></div>" +
       extraParts.join("") +
-      "</button>"
+      noteBody +
+      "</article>"
     );
   }
 
@@ -481,7 +491,7 @@
       return (
         '<button class="summary-row" type="button" data-summary-month="' + month + '">' +
         '<span class="summary-row-month">' + escapeHtml(label) + "</span>" +
-        '<span class="summary-values"><span>総支払額<strong>' + escapeHtml(formatCurrency(totals.total)) + '</strong></span><span>支払額<strong>' + escapeHtml(formatCurrency(totals.actual)) + '</strong></span><span>Pt利用<strong>' + escapeHtml(formatCurrency(totals.point)) + "</strong></span></span>" +
+        '<span class="summary-values"><span>総利用額<strong>' + escapeHtml(formatCurrency(totals.total)) + '</strong></span><span>実質支払額<strong>' + escapeHtml(formatCurrency(totals.actual)) + '</strong></span><span>Pt利用<strong>' + escapeHtml(formatCurrency(totals.point)) + "</strong></span></span>" +
         "</button>"
       );
     }).join("");
@@ -571,7 +581,6 @@
           '<button class="action-chip" type="button" data-template-action="delete" data-template-id="' + escapeHtml(template.id) + '">削除</button>' +
           "</div>" +
           "</div>" +
-          (template.item ? '<div class="entry-item">' + escapeHtml(template.item) + "</div>" : "") +
           (template.notes ? '<div class="entry-notes">Notes: ' + escapeHtml(template.notes) + "</div>" : "") +
           "</div>"
         );
@@ -593,6 +602,11 @@
 
     category.collapsed = !category.collapsed;
     saveState();
+    renderCategoryList();
+  }
+
+  function toggleNote(entryId) {
+    runtime.openNoteEntryId = runtime.openNoteEntryId === entryId ? "" : entryId;
     renderCategoryList();
   }
 
