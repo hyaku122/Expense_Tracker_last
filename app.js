@@ -480,15 +480,22 @@
     const noteBody = hasHiddenDetails && runtime.openNoteEntryId === entry.id
       ? '<div class="entry-note-popover">' + detailBlocks.join("") + "</div>"
       : "";
+    const metaParts = [];
+
+    if (amount !== 0) {
+      metaParts.push('<span class="meta-pill entry-money-pill"><span class="entry-meta-label">支払</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(amount)) + "</strong></span>");
+    }
+
+    if (pointAmount !== 0) {
+      metaParts.push('<span class="meta-pill entry-money-pill"><span class="entry-meta-label">Pt</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(pointAmount)) + "</strong></span>");
+    }
+
+    metaParts.push('<span class="meta-pill entry-money-pill"><span class="entry-meta-label">合計</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(total)) + "</strong></span>");
 
     return (
       '<article class="entry-row' + ratingClass + '" data-action="edit-entry" data-entry-id="' + escapeHtml(entry.id) + '" role="button" tabindex="0">' +
       '<div class="entry-row-top"><span class="entry-date">' + escapeHtml(formatDateLabel(entry.date, entry.year, entry.month)) + '</span><span class="entry-store">' + escapeHtml(storeLabel) + '</span><span class="entry-top-actions">' + noteButton + '<span class="meta-pill entry-rating-pill">' + escapeHtml(entry.rating || "未評価") + "</span></span></div>" +
-      '<div class="entry-row-meta">' +
-      '<span class="meta-pill entry-money-pill"><span class="entry-meta-label">支払</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(amount)) + "</strong></span>" +
-      '<span class="meta-pill entry-money-pill"><span class="entry-meta-label">Pt</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(pointAmount)) + "</strong></span>" +
-      '<span class="meta-pill entry-money-pill"><span class="entry-meta-label">合計</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(total)) + "</strong></span>" +
-      "</div>" +
+      '<div class="entry-row-meta">' + metaParts.join("") + "</div>" +
       extraParts.join("") +
       noteBody +
       "</article>"
