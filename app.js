@@ -429,7 +429,7 @@
         '<button class="category-toggle category-main-toggle" type="button" data-action="toggle-category" data-category-id="' + escapeHtml(category.id) + '">' +
         '<span class="category-title">' +
         '<span class="category-name">' + escapeHtml(category.name) + "</span>" +
-        '<span class="category-submeta"><span class="meta-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + '</span><span class="meta-pill">Pt ' + escapeHtml(formatCurrency(totals.point)) + "</span></span>" +
+        '<span class="category-submeta"><span class="meta-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + '</span><span class="meta-pill category-point-pill">Pt ' + escapeHtml(formatCurrency(totals.point)) + "</span></span>" +
         "</span>" +
         "</button>" +
         '<div class="category-header-actions">' +
@@ -457,20 +457,19 @@
     const total = amount + pointAmount;
     const storeLabel = entry.store || "店名未入力";
     const itemLabel = (entry.item || "").trim();
-    const extraParts = [];
     const detailBlocks = [];
-    const hasHiddenDetails = Boolean(itemLabel || entry.notes);
+    const hasHiddenDetails = Boolean(itemLabel || entry.goodValuePoint || entry.notes);
     const noteButton = hasHiddenDetails
-      ? '<button class="note-icon-button" type="button" data-action="toggle-note" data-entry-id="' + escapeHtml(entry.id) + '" aria-label="ItemとNotesを表示">' + NOTE_ICON + "</button>"
+      ? '<button class="note-icon-button" type="button" data-action="toggle-note" data-entry-id="' + escapeHtml(entry.id) + '" aria-label="詳細を表示">' + NOTE_ICON + "</button>"
       : "";
     const ratingClass = entry.rating === "⭐⭐⭐" ? " rating-three" : (entry.rating === "⭐⭐" ? " rating-two" : "");
 
-    if (entry.goodValuePoint) {
-      extraParts.push('<p class="entry-good-point">good value point: ' + escapeHtml(entry.goodValuePoint) + "</p>");
-    }
-
     if (itemLabel) {
       detailBlocks.push('<div class="entry-detail-block"><p class="entry-detail-label">Item</p><p class="entry-detail-value">' + escapeHtml(itemLabel) + "</p></div>");
+    }
+
+    if (entry.goodValuePoint) {
+      detailBlocks.push('<div class="entry-detail-block"><p class="entry-detail-label">good value point</p><p class="entry-detail-value">' + escapeHtml(entry.goodValuePoint) + "</p></div>");
     }
 
     if (entry.notes) {
@@ -496,7 +495,6 @@
       '<article class="entry-row' + ratingClass + '" data-action="edit-entry" data-entry-id="' + escapeHtml(entry.id) + '" role="button" tabindex="0">' +
       '<div class="entry-row-top"><span class="entry-date">' + escapeHtml(formatDateLabel(entry.date, entry.year, entry.month)) + '</span><span class="entry-store">' + escapeHtml(storeLabel) + '</span><span class="entry-top-actions">' + noteButton + '<span class="meta-pill entry-rating-pill">' + escapeHtml(entry.rating || "未評価") + "</span></span></div>" +
       '<div class="entry-row-meta">' + metaParts.join("") + "</div>" +
-      extraParts.join("") +
       noteBody +
       "</article>"
     );
