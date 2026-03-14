@@ -1,0 +1,19 @@
+{
+  "name": "Expense Tracker",
+  "short_name": "Expense Tracker",
+  "description": "iPhone Safari 向けのお小遣い帳 PWA",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8f1",
+  "theme_color": "#f07f8f",
+  "icons": [
+    {
+      "src": "icons/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

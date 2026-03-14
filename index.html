@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f07f8f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Expense Tracker">
+  <title>Expense Tracker</title>
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/app-icon.svg">
+  <link rel="manifest" href="manifest.webmanifest?v=2026-03-14-01">
+  <link rel="stylesheet" href="styles.css?v=2026-03-14-01">
+  <script>
+    window.EXPENSE_TRACKER_VERSION = "2026-03-14-01";
+  </script>
+  <script src="app.js?v=2026-03-14-01" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="title-block">
+        <p class="topbar-kicker">iPhone PWA</p>
+        <h1>Expense Tracker</h1>
+      </div>
+      <div class="top-actions">
+        <button id="refreshButton" class="icon-button" type="button" aria-label="更新">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M17.7 6.3A8 8 0 1 0 20 12h-2.3a5.7 5.7 0 1 1-1.67-4.03L13.8 10.2H20V4l-2.3 2.3Z"></path>
+            <path d="M18.9 1.9l.4 1.2 1.2.4-1.2.4-.4 1.2-.4-1.2-1.2-.4 1.2-.4.4-1.2Z"></path>
+          </svg>
+        </button>
+        <button id="settingsButton" class="icon-button" type="button" aria-label="設定">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 8.3A3.7 3.7 0 1 0 12 15.7 3.7 3.7 0 0 0 12 8.3Zm9 4.3-1.9.8c-.16.48-.35.94-.58 1.37l.82 1.91-1.8 1.8-1.91-.82c-.43.23-.89.42-1.37.58L13.4 21h-2.8l-.77-2.02a8.7 8.7 0 0 1-1.37-.58l-1.91.82-1.8-1.8.82-1.91a8.7 8.7 0 0 1-.58-1.37L3 12.6v-2.8l2.02-.77c.16-.48.35-.94.58-1.37l-.82-1.91 1.8-1.8 1.91.82c.43-.23.89-.42 1.37-.58L10.6 3h2.8l.77 2.02c.48.16.94.35 1.37.58l1.91-.82 1.8 1.8-.82 1.91c.23.43.42.89.58 1.37L21 9.8v2.8Z"></path>
+            <path d="M8.6 5.2c.94-.44 1.6-1.4 1.6-2.5.5 1.04 1.54 1.76 2.75 1.76S15.2 3.74 15.7 2.7c0 1.1.67 2.06 1.6 2.5-.94.44-1.6 1.4-1.6 2.5-.5-1.04-1.54-1.76-2.75-1.76S9.1 6.66 8.6 7.7c0-1.1-.66-2.06-1.6-2.5Z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section id="mainView" class="view">
+        <div class="year-bar">
+          <div class="year-switcher">
+            <button id="prevYearButton" class="pill-button small" type="button" aria-label="前年">‹</button>
+            <p id="yearLabel" class="year-label">2026年</p>
+            <button id="nextYearButton" class="pill-button small" type="button" aria-label="翌年">›</button>
+          </div>
+          <button id="summaryButton" class="pill-button summary-button" type="button">2026年まとめ</button>
+        </div>
+
+        <div id="monthTabs" class="month-tabs" aria-label="月選択"></div>
+
+        <section id="monthSummary" class="month-summary" aria-label="月の集計"></section>
+
+        <section id="categoryList" class="category-list" aria-label="カテゴリ一覧"></section>
+      </section>
+
+      <section id="summaryView" class="view hidden">
+        <div class="panel-header">
+          <button id="summaryBackButton" class="pill-button panel-back" type="button">戻る</button>
+          <div class="panel-header-body">
+            <p class="panel-kicker">年まとめ</p>
+            <h2 id="summaryYearLabel">2026年の集計</h2>
+          </div>
+        </div>
+        <section id="yearSummaryList" class="summary-list" aria-label="年まとめ一覧"></section>
+      </section>
+
+      <section id="settingsView" class="view hidden">
+        <div class="panel-header">
+          <button id="settingsBackButton" class="pill-button panel-back" type="button">戻る</button>
+          <div class="panel-header-body">
+            <p class="panel-kicker">設定</p>
+            <h2>バックアップと一覧管理</h2>
+          </div>
+        </div>
+
+        <section class="settings-card">
+          <div class="section-title-wrap">
+            <p class="section-kicker">Backup</p>
+            <h3>バックアップ</h3>
+          </div>
+          <label class="field-label" for="backupOutput">バックアップ文字列</label>
+          <textarea id="backupOutput" class="text-block" rows="6" readonly></textarea>
+          <div class="button-row">
+            <button id="createBackupButton" class="pill-button" type="button">バックアップ作成</button>
+            <button id="copyBackupButton" class="pill-button secondary" type="button">コピー</button>
+          </div>
+
+          <label class="field-label" for="restoreInput">復元用文字列</label>
+          <textarea id="restoreInput" class="text-block" rows="6" placeholder="ここにバックアップ文字列を貼り付けます"></textarea>
+          <button id="restoreBackupButton" class="pill-button warning" type="button">復元</button>
+        </section>
+
+        <section class="settings-card">
+          <div class="section-title-wrap">
+            <p class="section-kicker">Categories</p>
+            <h3>カテゴリ管理</h3>
+          </div>
+          <div id="categorySettingsList" class="settings-list"></div>
+          <form id="addCategoryForm" class="inline-form">
+            <input id="newCategoryName" class="text-input" type="text" maxlength="24" placeholder="新しいカテゴリ名">
+            <input id="newCategoryColor" class="color-input" type="color" value="#ffc38f" aria-label="カテゴリ色">
+            <button class="pill-button" type="submit">追加</button>
+          </form>
+        </section>
+
+        <section class="settings-card">
+          <div class="section-title-wrap">
+            <p class="section-kicker">Store</p>
+            <h3>店名候補</h3>
+          </div>
+          <label class="field-label" for="storeCategorySelect">対象カテゴリ</label>
+          <select id="storeCategorySelect" class="select-input"></select>
+          <div id="storeOptionList" class="settings-list compact"></div>
+          <form id="addStoreOptionForm" class="inline-form">
+            <input id="newStoreOption" class="text-input" type="text" maxlength="40" placeholder="店名候補を追加">
+            <button class="pill-button" type="submit">追加</button>
+          </form>
+        </section>
+
+        <section class="settings-card">
+          <div class="section-title-wrap">
+            <p class="section-kicker">Recurring</p>
+            <h3>定期入力</h3>
+          </div>
+          <div id="recurringTemplateList" class="settings-list"></div>
+          <form id="recurringTemplateForm" class="template-form">
+            <input id="templateId" type="hidden">
+            <div class="field-grid">
+              <label>
+                <span class="field-label">カテゴリ</span>
+                <select id="templateCategory" class="select-input"></select>
+              </label>
+              <label>
+                <span class="field-label">店名</span>
+                <input id="templateStore" class="text-input" type="text" maxlength="40">
+              </label>
+              <label>
+                <span class="field-label">日付</span>
+                <input id="templateDay" class="text-input" type="number" min="1" max="31" inputmode="numeric">
+              </label>
+              <label>
+                <span class="field-label">繰り返し(月)</span>
+                <input id="templateInterval" class="text-input" type="number" min="1" max="12" inputmode="numeric">
+              </label>
+              <label>
+                <span class="field-label">開始年</span>
+                <input id="templateStartYear" class="text-input" type="number" min="2000" max="2100" inputmode="numeric">
+              </label>
+              <label>
+                <span class="field-label">開始月</span>
+                <select id="templateStartMonth" class="select-input"></select>
+              </label>
+              <label>
+                <span class="field-label">Amount</span>
+                <input id="templateAmount" class="text-input" type="number" min="0" step="1" inputmode="numeric">
+              </label>
+              <label class="switch-field">
+                <span class="field-label">ポイント使用あり</span>
+                <input id="templatePointEnabled" type="checkbox">
+              </label>
+              <label>
+                <span class="field-label">ポイント利用額</span>
+                <input id="templatePointAmount" class="text-input" type="number" min="0" step="1" inputmode="numeric">
+              </label>
+              <label>
+                <span class="field-label">Item</span>
+                <input id="templateItem" class="text-input" type="text" maxlength="80">
+              </label>
+              <label>
+                <span class="field-label">good value point</span>
+                <input id="templateGoodValuePoint" class="text-input" type="text" maxlength="80">
+              </label>
+              <label>
+                <span class="field-label">rating</span>
+                <select id="templateRating" class="select-input">
+                  <option value="">未選択</option>
+                  <option value="⭐">⭐</option>
+                  <option value="⭐⭐">⭐⭐</option>
+                  <option value="⭐⭐⭐">⭐⭐⭐</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              <span class="field-label">Notes</span>
+              <textarea id="templateNotes" class="text-block" rows="3"></textarea>
+            </label>
+            <div class="button-row">
+              <button id="saveTemplateButton" class="pill-button" type="submit">定期入力を保存</button>
+              <button id="resetTemplateButton" class="pill-button secondary" type="button">フォームを空にする</button>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <button id="addEntryButton" class="floating-add" type="button" aria-label="明細を追加">＋</button>
+
+    <div id="sheetOverlay" class="sheet-overlay hidden"></div>
+    <section id="entrySheet" class="entry-sheet hidden" aria-label="明細編集シート">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-header">
+        <div>
+          <p class="sheet-kicker">Entry</p>
+          <h2 id="sheetTitle">明細を追加</h2>
+        </div>
+        <button id="closeSheetButton" class="icon-close" type="button" aria-label="閉じる">×</button>
+      </div>
+
+      <form id="entryForm" class="sheet-form">
+        <input id="entryId" type="hidden">
+
+        <div class="field-grid">
+          <label>
+            <span class="field-label">category</span>
+            <select id="entryCategory" class="select-input"></select>
+          </label>
+          <label>
+            <span class="field-label">Date</span>
+            <input id="entryDate" class="text-input" type="date">
+          </label>
+          <label class="full-span">
+            <span class="field-label">Store</span>
+            <input id="entryStore" class="text-input" type="text" maxlength="40" placeholder="店名を入力">
+          </label>
+          <label class="full-span">
+            <span class="field-label">店名候補</span>
+            <select id="entryStoreSelect" class="select-input">
+              <option value="">候補から選ぶ</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-label">Amount</span>
+            <input id="entryAmount" class="text-input" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+          </label>
+          <label class="switch-field">
+            <span class="field-label">ポイント使用あり</span>
+            <input id="entryPointEnabled" type="checkbox">
+          </label>
+          <label>
+            <span class="field-label">ポイント利用額</span>
+            <input id="entryPointAmount" class="text-input" type="number" min="0" step="1" inputmode="numeric" placeholder="0">
+          </label>
+          <label class="full-span">
+            <span class="field-label">Item</span>
+            <input id="entryItem" class="text-input" type="text" maxlength="100">
+          </label>
+          <label class="full-span">
+            <span class="field-label">good value point</span>
+            <input id="entryGoodValuePoint" class="text-input" type="text" maxlength="100">
+          </label>
+          <label>
+            <span class="field-label">rating</span>
+            <select id="entryRating" class="select-input">
+              <option value="">未選択</option>
+              <option value="⭐">⭐</option>
+              <option value="⭐⭐">⭐⭐</option>
+              <option value="⭐⭐⭐">⭐⭐⭐</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span class="field-label">Notes</span>
+          <textarea id="entryNotes" class="text-block" rows="4" placeholder="メモは空欄でも保存できます"></textarea>
+        </label>
+        <div id="notesSuggestionList" class="suggestion-list" aria-label="Notes候補"></div>
+
+        <div class="button-row">
+          <button id="deleteEntryButton" class="pill-button danger hidden" type="button">削除</button>
+          <button id="cancelEntryButton" class="pill-button secondary" type="button">キャンセル</button>
+          <button id="saveEntryButton" class="pill-button" type="submit">保存</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
