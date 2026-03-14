@@ -100,7 +100,6 @@
     dom.entryGoodValuePoint = document.getElementById("entryGoodValuePoint");
     dom.entryRating = document.getElementById("entryRating");
     dom.entryNotes = document.getElementById("entryNotes");
-    dom.notesSuggestionList = document.getElementById("notesSuggestionList");
     dom.deleteEntryButton = document.getElementById("deleteEntryButton");
     dom.toast = document.getElementById("toast");
   }
@@ -211,9 +210,6 @@
     });
 
     dom.entryPointEnabled.addEventListener("change", toggleEntryPointAmountState);
-    dom.entryNotes.addEventListener("input", function () {
-      renderNotesSuggestions(dom.entryNotes.value);
-    });
 
     dom.entryForm.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -425,7 +421,7 @@
       }));
       const totals = calculateTotals(entries);
       const isCollapsed = Boolean(category.collapsed);
-      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.74);
+      const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.94);
 
       return (
         '<section class="category-card" style="' + styleValue + '">' +
@@ -785,7 +781,6 @@
     }
 
     ensureStoreOption(template.categoryId, template.store);
-    rememberNote(template.notes);
     ensureMonthMaterialized(state.ui.selectedYear, state.ui.selectedMonth, true);
     saveState();
     render();
@@ -853,7 +848,6 @@
     dom.entryNotes.value = entry ? entry.notes : "";
 
     refreshEntryStoreOptions();
-    renderNotesSuggestions(dom.entryNotes.value);
     toggleEntryPointAmountState();
 
     dom.sheetOverlay.classList.remove("hidden");
@@ -882,10 +876,6 @@
     }).join("");
 
     dom.entryStoreSelect.value = options.indexOf(currentStore) >= 0 ? currentStore : "";
-  }
-
-  function renderNotesSuggestions(currentText) {
-    dom.notesSuggestionList.innerHTML = "";
   }
 
   function toggleEntryPointAmountState() {
@@ -1510,17 +1500,6 @@
     }
 
     return state.storeOptions[categoryId];
-  }
-
-  function rememberNote(note) {
-    const cleanNote = cleanText(note, 240);
-    if (!cleanNote) {
-      return;
-    }
-
-    state.noteHistory = [cleanNote].concat(state.noteHistory.filter(function (item) {
-      return item !== cleanNote;
-    })).slice(0, 24);
   }
 
   function findCategory(categoryId) {
