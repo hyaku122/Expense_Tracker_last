@@ -295,6 +295,16 @@ select {
   font-weight: 600;
 }
 
+#yearTotalsSummary .summary-card.summary-card-actual strong,
+.summary-values .summary-actual-value {
+  color: #d65264;
+}
+
+#yearTotalsSummary .summary-card.summary-card-point strong,
+.summary-values .summary-point-value {
+  color: #1f78d8;
+}
+
 .category-list {
   display: flex;
   flex-direction: column;

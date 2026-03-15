@@ -525,8 +525,8 @@
 
     dom.yearTotalsSummary.innerHTML = [
       renderSummaryCard("総利用額", yearTotals.total),
-      renderSummaryCard("実質支払額", yearTotals.actual),
-      renderSummaryCard("Pt利用", yearTotals.point)
+      '<article class="summary-card summary-card-actual"><span>実質支払額</span><strong>' + escapeHtml(formatCurrency(yearTotals.actual)) + "</strong></article>",
+      '<article class="summary-card summary-card-point"><span>Pt利用</span><strong>' + escapeHtml(formatCurrency(yearTotals.point)) + "</strong></article>"
     ].join("");
 
     dom.yearSummaryList.innerHTML = MONTH_LABELS.map(function (label, index) {
@@ -537,7 +537,7 @@
       return (
         '<button class="summary-row" type="button" data-summary-month="' + month + '">' +
         '<span class="summary-row-month">' + escapeHtml(label) + "</span>" +
-        '<span class="summary-values"><span>総利用額<strong>' + escapeHtml(formatCurrency(totals.total)) + '</strong></span><span>実質支払額<strong>' + escapeHtml(formatCurrency(totals.actual)) + '</strong></span><span>Pt利用<strong>' + escapeHtml(formatCurrency(totals.point)) + "</strong></span></span>" +
+        '<span class="summary-values"><span>総利用額<strong>' + escapeHtml(formatCurrency(totals.total)) + '</strong></span><span>実質支払額<strong class="summary-actual-value">' + escapeHtml(formatCurrency(totals.actual)) + '</strong></span><span>Pt利用<strong class="summary-point-value">' + escapeHtml(formatCurrency(totals.point)) + "</strong></span></span>" +
         "</button>"
       );
     }).join("");
