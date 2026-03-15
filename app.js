@@ -530,14 +530,14 @@
     const actualWithoutInvestment = yearTotals.actual - investmentTotals.actual;
 
     dom.yearTotalsSummary.innerHTML = [
-      renderSummaryCard("総利用額", yearTotals.total),
+      '<article class="summary-card summary-card-warm"><span>総利用額</span><strong>' + escapeHtml(formatCurrency(yearTotals.total)) + "</strong></article>",
       '<article class="summary-card summary-card-actual"><span>実質支払額</span><strong>' + escapeHtml(formatCurrency(yearTotals.actual)) + "</strong></article>",
       '<article class="summary-card summary-card-point"><span>Pt利用</span><strong>' + escapeHtml(formatCurrency(yearTotals.point)) + "</strong></article>"
     ].join("");
 
     dom.yearExtraSummary.innerHTML = [
-      '<article class="summary-card"><span>投資</span><strong>' + escapeHtml(formatCurrency(investmentTotals.actual)) + "</strong></article>",
-      '<article class="summary-card"><span>支払額（投資を除く）</span><strong>' + escapeHtml(formatCurrency(actualWithoutInvestment)) + "</strong></article>"
+      '<article class="summary-card summary-card-investment"><span>投資</span><strong>' + escapeHtml(formatCurrency(investmentTotals.actual)) + "</strong></article>",
+      '<article class="summary-card summary-card-warm"><span>支払額（投資を除く）</span><strong>' + escapeHtml(formatCurrency(actualWithoutInvestment)) + "</strong></article>"
     ].join("");
 
     dom.yearSummaryList.innerHTML = MONTH_LABELS.map(function (label, index) {

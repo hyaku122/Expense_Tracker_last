@@ -295,11 +295,22 @@ select {
   font-weight: 600;
 }
 
+#yearTotalsSummary .summary-card.summary-card-warm,
+#yearTotalsSummary .summary-card.summary-card-actual,
+#yearTotalsSummary .summary-card.summary-card-point,
+#yearExtraSummary .summary-card.summary-card-warm {
+  background: #f7e8a8;
+}
+
 #yearExtraSummary {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 18px;
+}
+
+#yearExtraSummary .summary-card.summary-card-investment {
+  background: #cbeee2;
 }
 
 #yearExtraSummary .summary-card strong {
