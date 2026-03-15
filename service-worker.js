@@ -1,12 +1,12 @@
-const APP_VERSION = "2026-03-14-01";
+const APP_VERSION = "2026-03-15-02";
 const CACHE_NAME = "expense-tracker-static-" + APP_VERSION;
 const CACHE_PREFIX = "expense-tracker-static-";
 const APP_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=2026-03-14-01",
-  "./app.js?v=2026-03-14-01",
-  "./manifest.webmanifest?v=2026-03-14-01",
+  "./styles.css?v=2026-03-15-02",
+  "./app.js?v=2026-03-15-02",
+  "./manifest.webmanifest?v=2026-03-15-02",
   "./icons/app-icon.svg"
 ];
 
