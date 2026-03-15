@@ -6,6 +6,9 @@
   const SESSION_TOAST_KEY = "expense-tracker-post-refresh-toast";
   const SCHEMA_VERSION = 1;
   const CACHE_PREFIX = "expense-tracker-static-";
+  const MIN_INPUT_YEAR = 2026;
+  const MAX_INPUT_YEAR = 2100;
+  const MIN_INPUT_DATE = "2026-01-01";
   const UPDATE_CONFIRM_MESSAGE = "キャッシュを削除して最新版を読み込みます。入力データは消えません。実行しますか？";
   const MONTH_LABELS = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
   const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
@@ -40,6 +43,9 @@
 
   function init() {
     cacheDom();
+    dom.templateStartYear.min = String(MIN_INPUT_YEAR);
+    dom.templateStartYear.max = String(MAX_INPUT_YEAR);
+    dom.entryDate.min = MIN_INPUT_DATE;
     populateMonthOptions();
     bindEvents();
     ensureMonthMaterialized(state.ui.selectedYear, state.ui.selectedMonth, true);
@@ -371,6 +377,7 @@
     renderRecurringTemplateList();
     toggleEntryPointAmountState();
     toggleTemplatePointAmountState();
+    document.getElementById("prevYearButton").disabled = state.ui.selectedYear <= MIN_INPUT_YEAR;
   }
 
   function renderHeader() {
@@ -616,7 +623,7 @@
   }
 
   function changeYear(delta) {
-    state.ui.selectedYear += delta;
+    state.ui.selectedYear = Math.max(MIN_INPUT_YEAR, state.ui.selectedYear + delta);
     saveState();
     render();
   }
@@ -724,12 +731,13 @@
 
   function resetTemplateForm() {
     const today = getTodayParts();
+    const defaultYear = Math.max(today.year, MIN_INPUT_YEAR);
     dom.templateId.value = "";
     dom.templateCategory.value = state.categories[0].id;
     dom.templateStore.value = "";
     dom.templateDay.value = "1";
     dom.templateInterval.value = "1";
-    dom.templateStartYear.value = String(today.year);
+    dom.templateStartYear.value = String(defaultYear);
     dom.templateStartMonth.value = String(today.month);
     dom.templateAmount.value = "";
     dom.templatePointEnabled.checked = false;
@@ -775,7 +783,7 @@
       store: cleanText(dom.templateStore.value, 40),
       day: clampNumber(dom.templateDay.value, 1, 31, 1),
       intervalMonths: clampNumber(dom.templateInterval.value, 1, 12, 1),
-      startYear: clampNumber(dom.templateStartYear.value, 2000, 2100, getTodayParts().year),
+      startYear: clampNumber(dom.templateStartYear.value, MIN_INPUT_YEAR, MAX_INPUT_YEAR, Math.max(getTodayParts().year, MIN_INPUT_YEAR)),
       startMonth: clampNumber(dom.templateStartMonth.value, 1, 12, getTodayParts().month),
       amount: cleanNumericText(dom.templateAmount.value),
       pointEnabled: Boolean(dom.templatePointEnabled.checked),
@@ -861,6 +869,7 @@
     dom.sheetTitle.textContent = entry ? "明細を編集" : "明細を追加";
     dom.deleteEntryButton.classList.toggle("hidden", !entry);
     dom.entryCategory.value = entry ? entry.categoryId : (categoryId || state.categories[0].id);
+    dom.entryDate.min = MIN_INPUT_DATE;
     dom.entryDate.value = entry ? entry.date : defaultDate;
     dom.entryStore.value = entry ? entry.store : "";
     dom.entryAmount.value = entry ? entry.amount : "";
@@ -925,6 +934,11 @@
 
     if (!findCategory(categoryId)) {
       showToast("カテゴリを選んでください");
+      return;
+    }
+
+    if (yearMonth.year < MIN_INPUT_YEAR) {
+      showToast("2026年以降の日付を入力してください");
       return;
     }
 
@@ -1229,6 +1243,7 @@
 
   function createDefaultState() {
     const today = getTodayParts();
+    const defaultYear = Math.max(today.year, MIN_INPUT_YEAR);
     const categories = CATEGORY_SEEDS.map(function (seed) {
       return {
         id: seed.id,
@@ -1248,11 +1263,11 @@
       lastSavedAt: new Date().toISOString(),
       categories: categories,
       entries: [],
-      recurringTemplates: createDefaultRecurringTemplates(today.year),
+      recurringTemplates: createDefaultRecurringTemplates(defaultYear),
       storeOptions: storeOptions,
       noteHistory: [],
       ui: {
-        selectedYear: today.year,
+        selectedYear: defaultYear,
         selectedMonth: today.month,
         settingsStoreCategoryId: categories[0].id
       }
@@ -1293,7 +1308,7 @@
       : fallback.recurringTemplates;
 
     const today = getTodayParts();
-    const selectedYear = clampNumber(raw.ui && raw.ui.selectedYear, 2000, 2100, today.year);
+    const selectedYear = clampNumber(raw.ui && raw.ui.selectedYear, MIN_INPUT_YEAR, MAX_INPUT_YEAR, Math.max(today.year, MIN_INPUT_YEAR));
     const selectedMonth = clampNumber(raw.ui && raw.ui.selectedMonth, 1, 12, today.month);
     const storeCategoryId = raw.ui && raw.ui.settingsStoreCategoryId;
 
@@ -1366,7 +1381,7 @@
       store: cleanText(template.store || "", 40),
       day: clampNumber(template.day, 1, 31, 1),
       intervalMonths: clampNumber(template.intervalMonths, 1, 12, 1),
-      startYear: clampNumber(template.startYear, 2000, 2100, getTodayParts().year),
+      startYear: clampNumber(template.startYear, MIN_INPUT_YEAR, MAX_INPUT_YEAR, Math.max(getTodayParts().year, MIN_INPUT_YEAR)),
       startMonth: clampNumber(template.startMonth, 1, 12, getTodayParts().month),
       amount: cleanNumericText(template.amount),
       pointEnabled: Boolean(template.pointEnabled),
