@@ -373,7 +373,7 @@ select {
   background: rgba(255, 255, 255, 0.92);
 }
 
-.category-point-pill {
+.category-header .meta-pill.category-point-pill {
   color: #1f78d8;
 }
 

@@ -422,6 +422,15 @@
       const totals = calculateTotals(entries);
       const isCollapsed = Boolean(category.collapsed);
       const styleValue = "--category-color:" + category.color + ";--category-soft:" + hexToRgba(category.color, 0.2) + ";--category-soft-strong:" + hexToRgba(category.color, 0.94);
+      const categoryMetaParts = [];
+
+      if (totals.actual !== 0) {
+        categoryMetaParts.push('<span class="meta-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + "</span>");
+      }
+
+      if (totals.point !== 0) {
+        categoryMetaParts.push('<span class="meta-pill category-point-pill">Pt ' + escapeHtml(formatCurrency(totals.point)) + "</span>");
+      }
 
       return (
         '<section class="category-card" style="' + styleValue + '">' +
@@ -429,7 +438,7 @@
         '<button class="category-toggle category-main-toggle" type="button" data-action="toggle-category" data-category-id="' + escapeHtml(category.id) + '">' +
         '<span class="category-title">' +
         '<span class="category-name">' + escapeHtml(category.name) + "</span>" +
-        '<span class="category-submeta"><span class="meta-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + '</span><span class="meta-pill category-point-pill">Pt ' + escapeHtml(formatCurrency(totals.point)) + "</span></span>" +
+        (categoryMetaParts.length ? '<span class="category-submeta">' + categoryMetaParts.join("") + "</span>" : "") +
         "</span>" +
         "</button>" +
         '<div class="category-header-actions">' +
