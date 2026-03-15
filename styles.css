@@ -295,6 +295,18 @@ select {
   font-weight: 600;
 }
 
+#yearExtraSummary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+#yearExtraSummary .summary-card strong {
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
 #yearTotalsSummary .summary-card.summary-card-actual strong,
 .summary-values .summary-actual-value {
   color: #d65264;
