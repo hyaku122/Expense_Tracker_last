@@ -290,6 +290,11 @@ select {
   color: var(--muted);
 }
 
+#yearTotalsSummary .summary-card strong {
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
 .category-list {
   display: flex;
   flex-direction: column;
