@@ -373,6 +373,10 @@ select {
   background: rgba(255, 255, 255, 0.92);
 }
 
+.category-header .meta-pill.category-actual-pill {
+  color: #d65264;
+}
+
 .category-header .meta-pill.category-point-pill {
   color: #1f78d8;
 }
@@ -564,6 +568,11 @@ select {
   font-size: 1rem;
   font-weight: 600;
   line-height: 1;
+}
+
+.entry-actual-pill .entry-meta-label,
+.entry-actual-pill .entry-meta-value {
+  color: #d65264;
 }
 
 .entry-point-pill .entry-meta-label,

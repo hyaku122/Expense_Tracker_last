@@ -64,6 +64,7 @@
     dom.monthSummary = document.getElementById("monthSummary");
     dom.categoryList = document.getElementById("categoryList");
     dom.summaryYearLabel = document.getElementById("summaryYearLabel");
+    dom.yearTotalsSummary = document.getElementById("yearTotalsSummary");
     dom.yearSummaryList = document.getElementById("yearSummaryList");
     dom.categorySettingsList = document.getElementById("categorySettingsList");
     dom.storeCategorySelect = document.getElementById("storeCategorySelect");
@@ -432,7 +433,7 @@
       const categoryMetaParts = [];
 
       if (totals.actual !== 0) {
-        categoryMetaParts.push('<span class="meta-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + "</span>");
+        categoryMetaParts.push('<span class="meta-pill category-actual-pill">支払 ' + escapeHtml(formatCurrency(totals.actual)) + "</span>");
       }
 
       if (totals.point !== 0) {
@@ -498,7 +499,7 @@
     const metaParts = [];
 
     if (amount !== 0) {
-      metaParts.push('<span class="meta-pill entry-money-pill"><span class="entry-meta-label">支払</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(amount)) + "</strong></span>");
+      metaParts.push('<span class="meta-pill entry-money-pill entry-actual-pill"><span class="entry-meta-label">支払</span><strong class="entry-meta-value">' + escapeHtml(formatCurrency(amount)) + "</strong></span>");
     }
 
     if (pointAmount !== 0) {
@@ -517,6 +518,17 @@
   }
 
   function renderYearSummary() {
+    const yearEntries = state.entries.filter(function (entry) {
+      return entry.year === state.ui.selectedYear;
+    });
+    const yearTotals = calculateTotals(yearEntries);
+
+    dom.yearTotalsSummary.innerHTML = [
+      renderSummaryCard("総利用額", yearTotals.total),
+      renderSummaryCard("実質支払額", yearTotals.actual),
+      renderSummaryCard("Pt利用", yearTotals.point)
+    ].join("");
+
     dom.yearSummaryList.innerHTML = MONTH_LABELS.map(function (label, index) {
       const month = index + 1;
       const entries = getEntriesForMonth(state.ui.selectedYear, month);
