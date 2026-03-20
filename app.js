@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = window.EXPENSE_TRACKER_VERSION || "2026-03-20-01";
+  const APP_VERSION = window.EXPENSE_TRACKER_VERSION || "2026-03-20-02";
   const STORAGE_KEY = "expense-tracker-state";
   const SESSION_TOAST_KEY = "expense-tracker-post-refresh-toast";
   const SCHEMA_VERSION = 1;

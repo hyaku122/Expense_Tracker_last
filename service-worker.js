@@ -1,16 +1,16 @@
-const APP_VERSION = "2026-03-20-01";
+const APP_VERSION = "2026-03-20-02";
 const CACHE_NAME = "expense-tracker-static-" + APP_VERSION;
 const CACHE_PREFIX = "expense-tracker-static-";
 const APP_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=2026-03-20-01",
-  "./app.js?v=2026-03-20-01",
-  "./manifest.webmanifest?v=2026-03-20-01",
-  "./icons/app-icon.svg?v=2026-03-20-01",
-  "./icons/app-icon-192.png?v=2026-03-20-01",
-  "./icons/app-icon-512.png?v=2026-03-20-01",
-  "./icons/apple-touch-icon.png?v=2026-03-20-01"
+  "./styles.css?v=2026-03-20-02",
+  "./app.js?v=2026-03-20-02",
+  "./manifest.webmanifest?v=2026-03-20-02",
+  "./icons/app-icon.svg?v=2026-03-20-02",
+  "./icons/app-icon-192.png?v=2026-03-20-02",
+  "./icons/app-icon-512.png?v=2026-03-20-02",
+  "./icons/apple-touch-icon.png?v=2026-03-20-02"
 ];
 
 self.addEventListener("install", function (event) {
