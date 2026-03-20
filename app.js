@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const APP_VERSION = window.EXPENSE_TRACKER_VERSION || "2026-03-14-01";
+  const APP_VERSION = window.EXPENSE_TRACKER_VERSION || "2026-03-20-01";
   const STORAGE_KEY = "expense-tracker-state";
   const SESSION_TOAST_KEY = "expense-tracker-post-refresh-toast";
   const SCHEMA_VERSION = 1;
@@ -1191,7 +1191,10 @@
       "./styles.css?v=" + encodeURIComponent(APP_VERSION),
       "./app.js?v=" + encodeURIComponent(APP_VERSION),
       "./manifest.webmanifest?v=" + encodeURIComponent(APP_VERSION),
-      "./icons/app-icon.svg"
+      "./icons/app-icon.svg?v=" + encodeURIComponent(APP_VERSION),
+      "./icons/app-icon-192.png?v=" + encodeURIComponent(APP_VERSION),
+      "./icons/app-icon-512.png?v=" + encodeURIComponent(APP_VERSION),
+      "./icons/apple-touch-icon.png?v=" + encodeURIComponent(APP_VERSION)
     ];
 
     await Promise.all(assets.map(function (asset) {
